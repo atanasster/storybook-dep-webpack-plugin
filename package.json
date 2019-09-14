@@ -1,0 +1,45 @@
+{
+  "name": "storybook-dep-webpack-plugin",
+  "version": "0.9.0",
+  "description": "A webpack plugin to inject storybook dependencies",
+  "keywords": [
+    "addon",
+    "dependencies",
+    "webpack",
+    "storybook"
+  ],
+  "homepage": "https://github.com/atanasster/storybook-dep-webpack-plugin/",
+  "bugs": "https://github.com/atanasster/storybook-dep-webpack-plugin/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atanasster/storybook-dep-webpack-plugin.git"
+  },
+  "license": "MIT",
+  "author": "Atanas Stoyanov",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "runtime",
+    "*.js"
+  ],
+  "scripts": {
+    "cleanup": "rm -rf dist",
+    "copy": "cp ./package.json dist/ && cp ./README.md dist/",
+    "build": "npm run cleanup && tsc -b && npm run copy",
+    "pub": "pushd ./ && npm run build && cd dist && npm publish && popd"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "lz-string": "^1.4.4",
+    "webpack-sources": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.138",
+    "@types/node": "^12.7.4",
+    "@types/webpack": "^4.39.1",
+    "@types/webpack-sources": "^0.1.5",
+    "eslint": "^6.3.0",
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.3"
+  }
+}

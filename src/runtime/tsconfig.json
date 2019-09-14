@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "../../dist/runtime",
+    "composite": true,
+    "sourceMap": true,
+    "target": "es5",
+    "module": "es2015"
+  },
+  "include": [
+    "./"
+  ]
+}
