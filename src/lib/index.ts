@@ -10,7 +10,6 @@ class DependenciesPlugin {
   private stories;
   private projectFolder = null;
   private assets = {};
-  private dependencies = {};
   private readonly compilationHash: string;
   
   constructor(options) {
@@ -19,9 +18,9 @@ class DependenciesPlugin {
       .digest('hex');
     this.compilationHash = `__${hash.substr(0, 6)}__`;
     this.options = {
-      filter:  /\.(stories|story)\.[tj]sx?$/,
+      filter: /\.(stories|story)\.[tj]sx?$/,
       exclude: /^@storybook|@babel/,
-      maxLevels: 10,
+      maxLevels: 8,
       pickProperties: ['id', 'name', 'request'],
       pickModuleProperties: [],
       ...options,
@@ -60,18 +59,18 @@ class DependenciesPlugin {
           chunk.files
           .filter(fileName => fileName.endsWith('.js'))
           .forEach(file => {
-            this.replaceSource(compilation, file, JSON.stringify(this.assets, null, 0));
+            this.replaceSource(compilation, file, this.assets);
           })
         })
       });
     });
   }
 
-  private shortenFolder(path: string): string {
-    if (path && this.projectFolder) {
-      return path.replace(this.projectFolder, '');
+  private shortenFolder(dir: string): string {
+    if (dir && this.projectFolder) {
+      return path.resolve(__dirname, dir).replace(this.projectFolder, '');
     }
-    return path;
+    return dir;
   }
 
   private replaceRuntimeModule(compiler) {
@@ -91,9 +90,9 @@ class DependenciesPlugin {
   private getModuleDependencies(module: any, level: number) {
     if (level < this.options.maxLevels) {
       return [...new Set(module.dependencies
-            .filter(dep => dep.module && !this.options.exclude.test(dep.request))
+            .filter(dep => dep.module && (dep.id || dep.name) && !this.options.exclude.test(dep.request))
             .map((dep) => {
-              const name = `${this.shortenFolder(dep.module.context)}___${dep.id || ''}___${dep.name || ''}___${dep.module.dependencies.length}`;
+              const name = `${this.shortenFolder(dep.module.context)}${this.compilationHash}${dep.id ? dep.id : ''}_${dep.name ? dep.name : ''}_${dep.module.dependencies.length}`;
               if (!this.assets[name]) {
                 const newModule = {
                   ...pick(dep, this.options.pickProperties),
@@ -109,16 +108,21 @@ class DependenciesPlugin {
       return undefined;
     }
   };
-  private replaceSource(compilation: webpack.compilation.Compilation, file: string, content: string) {
+  private replaceSource(compilation: webpack.compilation.Compilation, file: string, content: object) {
     const placeholder = `${this.compilationHash}INJECTED_DEPENDENCIES_DATA_PLACEHOLDER__`;
     const source = compilation.assets[file];
     const placeholderPos = source.source().indexOf(placeholder);
     if (placeholderPos > -1) {
+      const newContent = JSON.stringify({
+        maxLevels: this.options.maxLevels,
+        mapper: content,
+        compilationHash: this.compilationHash,
+      })
       const newSource = new ReplaceSource(source, file);
       newSource.replace(
         placeholderPos,
         placeholderPos + placeholder.length - 1,
-        content
+        newContent
       );
       compilation.assets[file] = newSource;
     }

@@ -6,4 +6,8 @@ export interface IDepencency {
   userRequest: string,
   dependencies: IDependenciesMap,
 }
-export type IDependenciesMap = string[];
+export interface IDependenciesMap {
+  maxLevels?: number,
+  mapper?: string[],
+  compilationHash?: string,
+};
