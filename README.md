@@ -71,5 +71,5 @@ example:
 ```
 
 ## Install and configure `storybook-addon-deps`
-[storybook-dep-webpack-plugin](https://github.com/atanasster/storybook-addon-deps/blob/master/README.md)
+[storybook-addon-deps](https://github.com/atanasster/storybook-addon-deps/blob/master/README.md)
 
