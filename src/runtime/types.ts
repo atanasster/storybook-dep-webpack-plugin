@@ -6,6 +6,4 @@ export interface IDepencency {
   userRequest: string,
   dependencies: IDependenciesMap,
 }
-export interface IDependenciesMap {
-  [name: string]: IDepencency
-}
+export type IDependenciesMap = string[];

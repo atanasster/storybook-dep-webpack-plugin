@@ -90,41 +90,23 @@ class DependenciesPlugin {
   
   private getModuleDependencies(module: any, level: number) {
     if (level < this.options.maxLevels) {
-      return module.dependencies
+      return [...new Set(module.dependencies
             .filter(dep => dep.module && !this.options.exclude.test(dep.request))
-            .reduce((arr, dep) => {
-              const name = this.shortenFolder(dep.module.context);
-              if (!this.dependencies[name]) {
-                this.dependencies[name] = [];
+            .map((dep) => {
+              const name = `${this.shortenFolder(dep.module.context)}___${dep.id || ''}___${dep.name || ''}___${dep.module.dependencies.length}`;
+              if (!this.assets[name]) {
+                const newModule = {
+                  ...pick(dep, this.options.pickProperties),
+                  ...pick(dep.module, this.options.pickModuleProperties),
+                  dependencies: this.getModuleDependencies(dep.module, level + 1)
+                }; 
+                this.assets[name] = newModule;
               }
-              this.dependencies[name].push(dep);
-              const oldModule = arr[name];
-                if (!oldModule || oldModule.dependencies.length < dep.module.dependencies.length) {
-                  const dependencies = this.getModuleDependencies(dep.module, level + 1);
-                  if (!dependencies) {
-                    return arr;
-                  }
-                  return {
-                    ...arr,
-                    [name]: {
-                      ...pick(dep, this.options.pickProperties),
-                      ...pick(dep.module, this.options.pickModuleProperties),
-                      dependencies,
-                    },
-                  };
-                }
-                else {
-                  this.options.pickProperties.forEach(p => {
-                    if (dep[p] && (!oldModule[p] || (typeof dep[p] === 'string' && oldModule[p].length > dep[p].length))) {
-                      oldModule[p] = dep[p];
-                    } 
-                  });  
-                }
-              return arr;
-            }
-            , {});
+              return name;
+            })
+          )];
     } else {
-      return null;
+      return undefined;
     }
   };
   private replaceSource(compilation: webpack.compilation.Compilation, file: string, content: string) {
@@ -132,7 +114,6 @@ class DependenciesPlugin {
     const source = compilation.assets[file];
     const placeholderPos = source.source().indexOf(placeholder);
     if (placeholderPos > -1) {
-      console.log(content.length);
       const newSource = new ReplaceSource(source, file);
       newSource.replace(
         placeholderPos,
