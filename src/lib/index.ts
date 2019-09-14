@@ -20,7 +20,7 @@ class DependenciesPlugin {
     this.options = {
       filter: /\.(stories|story)\.[tj]sx?$/,
       exclude: /^@storybook|@babel/,
-      maxLevels: 8,
+      maxLevels: 10,
       pickProperties: ['id', 'name', 'request'],
       pickModuleProperties: [],
       ...options,
@@ -89,21 +89,49 @@ class DependenciesPlugin {
   
   private getModuleDependencies(module: any, level: number) {
     if (level < this.options.maxLevels) {
-      return [...new Set(module.dependencies
-            .filter(dep => dep.module && (dep.id || dep.name) && !this.options.exclude.test(dep.request))
-            .map((dep) => {
-              const name = `${this.shortenFolder(dep.module.context)}${this.compilationHash}${dep.id ? dep.id : ''}_${dep.name ? dep.name : ''}_${dep.module.dependencies.length}`;
-              if (!this.assets[name]) {
-                const newModule = {
-                  ...pick(dep, this.options.pickProperties),
-                  ...pick(dep.module, this.options.pickModuleProperties),
-                  dependencies: this.getModuleDependencies(dep.module, level + 1)
-                }; 
-                this.assets[name] = newModule;
-              }
-              return name;
-            })
-          )];
+      const dependencies = [...new Set(module.dependencies
+        .filter(dep => dep.module && !this.options.exclude.test(dep.request))
+        .map((dep) => {
+          const contextPath = this.shortenFolder(dep.module.context);
+          const name = `${contextPath}${this.compilationHash}${dep.id ? dep.id : ''}_${dep.module.dependencies.length}`;
+          if (!this.assets[name]) {
+            const newModule = {
+              ...pick(dep, this.options.pickProperties),
+              ...pick(dep.module, this.options.pickModuleProperties),
+              dependencies: this.getModuleDependencies(dep.module, level + 1)
+            }; 
+            this.assets[name] = newModule;
+          }
+          return name;
+        }))];
+
+        if (!dependencies || !dependencies.length) {
+          return undefined;
+        }
+        // reduce the list of dependencies to only unique by context
+        // keep the ones with an id or name as preferred
+        const map = new Map();
+        for (const key of dependencies as string[]) {
+          const contextPath = key.substring(0, key.indexOf(this.compilationHash));
+          let items = map.get(contextPath);
+          const item = this.assets[key];
+          if (!items) {
+            items = [key]
+          } else {
+            if (item.id || item.name) {
+              const emptyKey = `${contextPath}${this.compilationHash}_`;
+              const emptySlotIdx =  items.findIndex(key => key.startsWith(emptyKey));
+              if (emptySlotIdx >= 0) {
+                items.splice(emptySlotIdx,1);
+              }  
+              items.push(key);
+            }
+          }
+          map.set(contextPath, items);
+        }
+        const result = [];
+        map.forEach(value => value.forEach(key => result.push(key)))
+        return result;
     } else {
       return undefined;
     }
