@@ -1,6 +1,6 @@
 # storybook-dep-webpack-plugin
 
-A webpack plugin to collect dependencies data. 
+A webpack plugin to collect dependencies data.<br />
 Works in conjunction with [storybook-addon-deps](https://github.com/atanasster/storybook-addon-deps/)
 
 ![Dependencies plugin](./doc/storybook_dependencies.gif)
