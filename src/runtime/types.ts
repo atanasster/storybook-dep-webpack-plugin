@@ -4,6 +4,7 @@ export interface IDepencency {
   name: string,
   request: string,
   userRequest: string,
+  contextPath: string,
   dependencies: IDependenciesMap,
 }
 export interface IDependenciesMap {

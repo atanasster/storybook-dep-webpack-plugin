@@ -30,7 +30,7 @@ class DependenciesPlugin {
   apply(compiler: webpack.Compiler) {
     this.replaceRuntimeModule(compiler);
     compiler.hooks.compilation.tap(DependenciesPlugin.pluginName, compilation => {
-      compilation.hooks.finishModules.tap(DependenciesPlugin.pluginName, (modules: any[]) => {
+      compilation.hooks.optimizeModules.tap(DependenciesPlugin.pluginName, (modules: any[]) => {
         this.stories = modules.filter((module) => {
           if (!module.resource) {
             return false;
@@ -93,11 +93,14 @@ class DependenciesPlugin {
         .filter(dep => dep.module && !this.options.exclude.test(dep.request))
         .map((dep) => {
           const contextPath = this.shortenFolder(dep.module.context);
-          const name = `${contextPath}${this.compilationHash}${dep.id ? dep.id : ''}_${dep.module.dependencies.length}`;
+          // const dependencies = dep.module.dependencies.reduce((r, d) => r + (d.module ? d.module.context : d.request), '');
+          // const dependenciesHash= createHash('md5').update(dependencies).digest('hex').toString()
+          const name = `${dep.module.debugId}${this.compilationHash}${dep.id ? dep.id : ''}_${dep.module.dependencies.length}`;
           if (!this.assets[name]) {
             const newModule = {
               ...pick(dep, this.options.pickProperties),
               ...pick(dep.module, this.options.pickModuleProperties),
+              contextPath,
               dependencies: this.getModuleDependencies(dep.module, level + 1)
             }; 
             this.assets[name] = newModule;
