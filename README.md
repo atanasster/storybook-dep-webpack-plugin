@@ -16,7 +16,7 @@ npm i -D storybook-dep-webpack-plugin
 
 ## Usage
 
-in your storybook `webpack.config.js` file add the plugin:
+in your storybook `webpack.config.js` file, add and configure the plugin:
 
 ```js
 const DependenciesPlugin = require('storybook-dep-webpack-plugin');
@@ -28,7 +28,7 @@ const DependenciesPlugin = require('storybook-dep-webpack-plugin');
 
 
 ## Options
-**filter** - a RegExp or function to select the stories
+**filter** - a RegExp or function to select the stories<br/>
 example: 
 ```
   config.plugins.push(new DependenciesPlugin({
@@ -38,7 +38,7 @@ example:
   }));
 ```
 
-**exclude** - a RegExp for the modules to exclude
+**exclude** - a RegExp for the modules to exclude<br/>
 example: 
 ```
   config.plugins.push(new DependenciesPlugin({
@@ -46,7 +46,7 @@ example:
   }));
 ```
 
-**maxLevels** - How many levels deep to follow the dependencies
+**maxLevels** - How many levels deep to follow the dependencies<br/>
 example: 
 ```
   config.plugins.push(new DependenciesPlugin({
@@ -54,7 +54,7 @@ example:
   }));
 ```
 
-**pickProperties** - An array of the props to pick from the module webpack data
+**pickProperties** - An array of the props to pick from the module webpack data<br/>
 example: 
 ```
   config.plugins.push(new DependenciesPlugin({
@@ -62,7 +62,7 @@ example:
   }));
 ```
 
-**pickModuleProperties** - An array of the props to pick from the module.module webpack data
+**pickModuleProperties** - An array of the props to pick from the module.module webpack data<br/>
 example: 
 ```
   config.plugins.push(new DependenciesPlugin({
