@@ -93,10 +93,9 @@ class DependenciesPlugin {
         .filter(dep => dep.module && !this.options.exclude.test(dep.request))
         .map((dep) => {
           const contextPath = this.shortenFolder(dep.module.context);
-          // const dependencies = dep.module.dependencies.reduce((r, d) => r + (d.module ? d.module.context : d.request), '');
-          // const dependenciesHash= createHash('md5').update(dependencies).digest('hex').toString()
-          const name = `${dep.module.debugId}${this.compilationHash}${dep.id ? dep.id : ''}_${dep.module.dependencies.length}`;
-          if (!this.assets[name]) {
+          const name = `${dep.module.debugId}${this.compilationHash}_${dep.module.dependencies.length}`;
+          const asset = this.assets[name];
+          if (!asset) {
             const newModule = {
               ...pick(dep, this.options.pickProperties),
               ...pick(dep.module, this.options.pickModuleProperties),
@@ -104,6 +103,11 @@ class DependenciesPlugin {
               dependencies: this.getModuleDependencies(dep.module, level + 1)
             }; 
             this.assets[name] = newModule;
+          } else {
+            if (dep.id && !asset.id) {
+              asset.id = dep.id;
+              asset.name = dep.name;
+            }
           }
           return name;
         }))];
