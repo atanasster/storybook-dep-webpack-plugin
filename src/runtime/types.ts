@@ -5,7 +5,7 @@ export interface IDepencency {
   request: string,
   userRequest: string,
   contextPath: string,
-  dependencies: IDependenciesMap,
+  dependencies: string[],
 }
 export interface IDependenciesMap {
   maxLevels?: number,
