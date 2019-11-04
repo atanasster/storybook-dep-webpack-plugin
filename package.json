@@ -1,6 +1,6 @@
 {
   "name": "storybook-dep-webpack-plugin",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "description": "A webpack plugin to inject storybook dependencies",
   "keywords": [
     "addon",
