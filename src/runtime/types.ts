@@ -1,5 +1,5 @@
 
-export interface IDepencency {
+export interface IDependency {
   id: string,
   name: string,
   request: string,
