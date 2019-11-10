@@ -74,11 +74,7 @@ class DependenciesPlugin {
   }
 
   private replaceRuntimeModule(compiler) {
-    const runtimePath = path.resolve(__dirname, '../runtime/main.js');
     const nmrp = new webpack.NormalModuleReplacementPlugin(/main\.js$/, resource => {
-      if (resource.resource !== runtimePath) {
-        return;
-      }
       resource.loaders.push({
         loader: path.join(__dirname, 'runtimeLoader.js'),
         options: JSON.stringify({compilationHash: this.compilationHash}),
