@@ -1,6 +1,6 @@
 {
   "name": "storybook-dep-webpack-plugin",
-  "version": "0.9.9",
+  "version": "0.9.91",
   "description": "A webpack plugin to inject storybook dependencies",
   "keywords": [
     "addon",
@@ -29,7 +29,6 @@
     "pub": "pushd ./ && npm run build && cd dist && npm publish && popd"
   },
   "dependencies": {
-    "lodash": "^4.17.15",
     "webpack-sources": "^1.3.0"
   },
   "devDependencies": {

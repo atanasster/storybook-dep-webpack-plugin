@@ -1,9 +1,11 @@
 import { ReplaceSource } from 'webpack-sources';
 import * as path from 'path';
 import * as webpack from 'webpack';
-import pick from 'lodash/pick';
 import { createHash } from 'crypto';
 
+const pick = (o: object, props: string[]) => {
+  return props.reduce((r, prop) => ({ ...r, [prop]: o[prop]}), {});
+}
 class DependenciesPlugin {
   public static pluginName = 'storybook-dep-webpack-plugin';
   private readonly options;
@@ -75,10 +77,12 @@ class DependenciesPlugin {
 
   private replaceRuntimeModule(compiler) {
     const nmrp = new webpack.NormalModuleReplacementPlugin(/main\.js$/, resource => {
-      resource.loaders.push({
-        loader: path.join(__dirname, 'runtimeLoader.js'),
-        options: JSON.stringify({compilationHash: this.compilationHash}),
-      });
+      if (resource.resource) {
+        resource.loaders.push({
+          loader: path.join(__dirname, 'runtimeLoader.js'),
+          options: JSON.stringify({compilationHash: this.compilationHash}),
+        });
+      }  
     });
     nmrp.apply(compiler);
   }
