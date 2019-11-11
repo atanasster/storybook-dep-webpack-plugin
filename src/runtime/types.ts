@@ -8,6 +8,7 @@ export interface IDependency {
   dependencies: string[],
 }
 export interface IDependenciesMap {
+  error?: boolean,
   maxLevels?: number,
   mapper?: string[],
   compilationHash?: string,

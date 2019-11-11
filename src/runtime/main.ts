@@ -12,7 +12,14 @@ export const getDependencyMap: DependencyStringifyFunction = () => {
     return map;
   }
   if (dependenciesMap) {
-    map = JSON.parse(dependenciesMap);
+    try {
+      map = JSON.parse(dependenciesMap);
+    }  
+    catch (e) {
+      map = {
+        error: true,
+      }
+    }
     return map;
   }
   return undefined;
