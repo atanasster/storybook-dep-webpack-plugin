@@ -23,9 +23,7 @@ const DependenciesPlugin = require('storybook-dep-webpack-plugin');
 
 module.exports = ({ config, mode }) => {
   ...
-  config.plugins.push(new DependenciesPlugin({
-    options
-  }));
+  config.plugins.push(new DependenciesPlugin());
   ...
   return config;
 };
