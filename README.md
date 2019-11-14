@@ -20,10 +20,15 @@ in your storybook `webpack.config.js` file, add and configure the plugin:
 
 ```js
 const DependenciesPlugin = require('storybook-dep-webpack-plugin');
-...
+
+module.exports = ({ config, mode }) => {
+  ...
   config.plugins.push(new DependenciesPlugin({
     options
   }));
+  ...
+  return config;
+};
 ```
 
 
