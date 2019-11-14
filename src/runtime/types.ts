@@ -10,6 +10,8 @@ export interface IDependency {
 export interface IDependenciesMap {
   error?: boolean,
   maxLevels?: number,
-  mapper?: string[],
+  mapper?: {
+    [key:string]: IDependency,
+  }
   compilationHash?: string,
 };
