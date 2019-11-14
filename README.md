@@ -6,7 +6,7 @@ Works in conjunction with [storybook-addon-deps](https://github.com/atanasster/s
 ![Dependencies plugin](./doc/storybook_dependencies.gif)
 
 ## Live demo
-[grommet-controls](https://atanasster.github.io/grommet-controls/?path=/deps/controls-controls-avatar--main)
+[grommet-controls](https://atanasster.github.io/grommet-controls/?path=/docs/controls-controls-avatar--main)
 
 
 ## Installation
