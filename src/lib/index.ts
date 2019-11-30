@@ -3,6 +3,12 @@ import * as path from 'path';
 import * as webpack from 'webpack';
 import { createHash } from 'crypto';
 
+export interface IPluginOptions {
+  filter?: RegExp;
+  exclude?: RegExp;
+  maxLevels?: number;
+}
+
 const pick = (o: object, props: string[]) => {
   return props.reduce((r, prop) => ({ ...r, [prop]: o[prop]}), {});
 }
@@ -14,7 +20,7 @@ class DependenciesPlugin {
   private assets = {};
   private readonly compilationHash: string;
   
-  constructor(options) {
+  constructor(options: IPluginOptions) {
     const hash = createHash('md5')
       .update(new Date().getTime().toString())
       .digest('hex');
