@@ -16,7 +16,28 @@ npm i -D storybook-dep-webpack-plugin
 
 ## Usage
 
-in your storybook `webpack.config.js` file, add and configure the plugin:
+You can register the plugin in two deifferent ways
+
+### 1. New way - inside your storybook `main.js` webpack settings you will register the plugin:
+
+```js
+const DependenciesPlugin = require('storybook-dep-webpack-plugin');
+
+module.exports = {
+...
+  webpack: async (config, { configType }) => ({
+    ...config,
+    plugins: [
+      ...config.plugins,
+      new DependenciesPlugin()
+    ]
+  }),
+...
+};
+
+```
+
+### 2. Older way - in your storybook `webpack.config.js` file, add and configure the plugin:
 
 ```js
 const DependenciesPlugin = require('storybook-dep-webpack-plugin');
@@ -28,7 +49,6 @@ module.exports = ({ config, mode }) => {
   return config;
 };
 ```
-
 
 ## Options
 **filter** - a RegExp or function to select the stories.<br/>
