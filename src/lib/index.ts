@@ -26,12 +26,11 @@ class DependenciesPlugin {
       .digest('hex');
     this.compilationHash = `__${hash.substr(0, 6)}__`;
     this.options = {
-      filter: /\.(stories|story)\.([tj]sx|[tj]s|mdx)?$/,
-      exclude: /^@storybook|@babel/,
-      maxLevels: 10,
+      filter: options.filter || /\.(stories|story)\.([tj]sx|[tj]s|mdx)?$/,
+      exclude: options.exclude || /^@storybook|@babel/,
+      maxLevels: options.maxLevels || 10,
       pickProperties: ['id', 'name', 'request'],
       pickModuleProperties: [],
-      ...options,
     };
   }
 
