@@ -16,7 +16,7 @@ npm i -D storybook-dep-webpack-plugin
 
 ## Usage
 
-You can register the plugin in two deifferent ways
+You can register the plugin in two different ways
 
 ### 1. New way - inside your storybook `main.js` webpack settings you will register the plugin:
 
