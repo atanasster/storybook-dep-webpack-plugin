@@ -49,9 +49,9 @@ class DependenciesPlugin {
         });
         this.stories.forEach(story => {
           if (!this.projectFolder) {
-            const project = path.dirname(require.main.filename).split('/');
+            const project = path.dirname(require.main.filename).split(path.sep);
             const node_modules = project.indexOf('node_modules');
-            this.projectFolder = project.slice(0, node_modules).join('/');
+            this.projectFolder = project.slice(0, node_modules).join(path.sep);
           }  
           const dependencies = this.getModuleDependencies(story, 0);
           this.assets[this.shortenFolder(story.userRequest)] = {
