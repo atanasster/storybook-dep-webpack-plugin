@@ -1,3 +1,4 @@
+import path from 'path';
 import { IDependenciesMap } from './types';
 
 export const dependenciesMap:string  = '__COMPILATION_HASH__INJECTED_DEPENDENCIES_DATA_PLACEHOLDER__';
@@ -13,7 +14,7 @@ export const getDependencyMap: DependencyStringifyFunction = () => {
   }
   if (dependenciesMap) {
     try {
-      map = JSON.parse(dependenciesMap);
+      map = JSON.parse(dependenciesMap.replace(path.sep, "/"));
     }  
     catch (e) {
       map = {
