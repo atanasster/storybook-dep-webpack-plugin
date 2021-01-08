@@ -6,6 +6,7 @@ import { createHash } from 'crypto';
 export interface IPluginOptions {
   filter?: RegExp;
   exclude?: RegExp;
+  moduleDirectoryMatch?: RegExp;
   maxLevels?: number;
 }
 
@@ -28,6 +29,7 @@ class DependenciesPlugin {
     this.options = {
       filter: options.filter || /\.(stories|story)\.([tj]sx|[tj]s|mdx)?$/,
       exclude: options.exclude || /^@storybook|@babel/,
+      moduleDirectoryMatch: options.moduleDirectoryMatch || /\/index.[tj]s$/,
       maxLevels: options.maxLevels || 10,
       pickProperties: ['id', 'name', 'request'],
       pickModuleProperties: [],
@@ -97,21 +99,31 @@ class DependenciesPlugin {
       const dependencies = [...new Set(module.dependencies
         .filter(dep => dep.module && !this.options.exclude.test(dep.request))
         .map((dep) => {
-          const contextPath = this.shortenFolder(dep.module.context);
-          const name = `${dep.module.debugId}${this.compilationHash}_${dep.module.dependencies.length}`;
+          let effectiveDep = dep;
+
+          if (this.options.moduleDirectoryMatch.test(dep.module.resource) && dep.name) {
+            const redirectedTo = dep.module.dependencies.find(l2dep => l2dep.name === dep.name);
+            if (redirectedTo) {
+              effectiveDep = redirectedTo;
+            }
+          }
+
+          const contextPath = this.shortenFolder(effectiveDep.module.context);
+          const name = `${effectiveDep.module.debugId}${this.compilationHash}_${effectiveDep.module.dependencies.length}`;
           const asset = this.assets[name];
+
           if (!asset) {
             const newModule = {
-              ...pick(dep, this.options.pickProperties),
-              ...pick(dep.module, this.options.pickModuleProperties),
+              ...pick(effectiveDep, this.options.pickProperties),
+              ...pick(effectiveDep.module, this.options.pickModuleProperties),
               contextPath,
-              dependencies: this.getModuleDependencies(dep.module, level + 1)
+              dependencies: this.getModuleDependencies(effectiveDep.module, level + 1)
             }; 
             this.assets[name] = newModule;
           } else {
-            if (dep.id && !asset.id) {
-              asset.id = dep.id;
-              asset.name = dep.name;
+            if (effectiveDep.id && !asset.id) {
+              asset.id = effectiveDep.id;
+              asset.name = effectiveDep.name;
             }
           }
           return name;
