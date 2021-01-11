@@ -102,7 +102,7 @@ class DependenciesPlugin {
           let effectiveDep = dep;
 
           if (this.options.moduleDirectoryMatch.test(dep.module.resource) && dep.name) {
-            const redirectedTo = dep.module.dependencies.find(l2dep => l2dep.name === dep.name);
+            const redirectedTo = dep.module.dependencies.find(l2dep => l2dep.name === dep.id && l2dep.module);
             if (redirectedTo) {
               effectiveDep = redirectedTo;
             }
